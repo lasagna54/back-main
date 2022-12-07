@@ -1,0 +1,18 @@
+pour rentrer en mode interractif sur un docker
+docker exec -it <nom> /bin/bash 
+
+
+Mise en place des deux docker qui communiquent sur le meme réseau:
+
+docker volume create postgres
+
+docker network create backend
+
+docker run --name postgres -d --env POSTGRES_DB=myDatabase --env POSTGRES_USER=databaseUser --env POSTGRES_PASSWORD=databasePassword --volume postgres:/var/lib/postgresql/data:rw --network backend postgres:14
+
+docker run --name backend -d -p 8080:8080 --env SPRING_DATASOURCE_URL="jdbc:postgresql://postgres:5432/myDatabase" --env SPRING_DATASOURCE_USERNAME=databaseUser --env SPRING_DATASOURCE_PASSWORD=databasePassword --network backend back:2.0
+
+
+mise ne place du front:
+
+docker run --name frontend -d -p 4200:4200 --env BACKEND_URL_ENV_VAR="localhost:80" front:1.0
